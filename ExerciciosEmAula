@@ -1,0 +1,28 @@
+DECLARE
+    emprec emp%ROWTYPE;
+    
+    CURSOR c_emp_cursor IS
+    SELECT *
+    FROM  emp;
+    
+BEGIN
+    OPEN c_emp_cursor;
+    LOOP
+    FETCH c_emp_cursor INTO emprec;
+    EXIT WHEN c_emp_cursor%NOTFOUND;
+        IF emprec.sal >= 2750 THEN
+            INSERT INTO empmais(CODIGO, NOME, CARGO) VALUES (emprec.empno, emprec.ename, emprec.job);
+        ELSE 
+            INSERT INTO empmenos(CODIGO, NOME, CARGO) VALUES (emprec.empno, emprec.ename, emprec.job);
+        END IF;
+     END LOOP;
+    CLOSE c_emp_cursor;
+    
+EXCEPTION 
+    WHEN TOO_MANY_ROWS THEN
+    DBMS_OUTPUT.PUT_LINE (' Sua consulta retornou mais de uma linha.');
+    WHEN OTHERS THEN
+    DBMS_OUTPUT.PUT_LINE (' Erro não previsto.');
+END;
+/
+
